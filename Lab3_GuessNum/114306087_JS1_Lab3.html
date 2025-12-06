@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Guessing Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            color: #333;
+        }
+        #image {
+            margin-top: 30px;
+        }
+        #image img {
+            max-width: 400px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>114306087_Number Guessing Game</h1>
+    <div id="image"></div>
+
+    <script>
+        var answer = Math.floor(Math.random() * 100) + 1;
+        var chances = 7;
+        var minRange = 1;
+        var maxRange = 100;
+        var gameOver = false;
+
+        while (chances > 0 && !gameOver) {
+            var input = window.prompt(
+                "Guess a number between " + minRange + " and " + maxRange + 
+                "\nRemaining attempts: " + chances
+            );
+
+            if (input === null) {
+                break;
+            }
+
+            input = input.trim();
+
+            if (input === "" || isNaN(input)) {
+                alert("Invalid input! Please enter a valid number.");
+                continue;
+            }
+
+            var guess = Number(input);
+
+            if (guess < minRange || guess > maxRange) {
+                alert("Invalid input! Please enter a number between " + minRange + " and " + maxRange + ".");
+                continue;
+            }
+
+            chances--;
+
+            if (guess === answer) {
+                var img = document.getElementById("image");
+                img.innerHTML = '<img src="images/correct.jpg" alt="correct">';
+                alert("Congratulations! You guessed the correct number: " + answer);
+                gameOver = true;
+            } else if (guess < answer) {
+                if (guess > minRange) {
+                    minRange = guess + 1;
+                }
+                
+                if (chances === 0) {
+                    var img = document.getElementById("image");
+                    img.innerHTML = '<img src="images/wrong.jpg" alt="wrong">';
+                    alert("Game Over! The correct answer was: " + answer);
+                }
+            } else {
+                if (guess < maxRange) {
+                    maxRange = guess - 1;
+                }
+                
+                if (chances === 0) {
+                    var img = document.getElementById("image");
+                    img.innerHTML = '<img src="images/wrong.jpg" alt="wrong">';
+                    alert("Game Over! The correct answer was: " + answer);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
