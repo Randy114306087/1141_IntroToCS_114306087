@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudentID_HW7_1A2B</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .game-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        input {
+            flex: 1;
+            padding: 12px;
+            font-size: 18px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            text-align: center;
+            letter-spacing: 5px;
+        }
+        
+        button {
+            padding: 12px 30px;
+            font-size: 16px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #5568d3;
+        }
+        
+        .records {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .record-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .record-guess {
+            font-weight: bold;
+            letter-spacing: 3px;
+        }
+        
+        .record-result {
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .instructions {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .instructions h3 {
+            margin-top: 0;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>114306087_HW7_1A2B</h1>
+        
+        <div class="instructions">
+            <h3>📋 遊戲規則</h3>
+            <p>• 電腦會隨機產生一組 4 位不重複的數字</p>
+            <p>• A 代表數字和位置都正確</p>
+            <p>• B 代表數字正確但位置錯誤</p>
+            <p>• 猜對所有數字（4A0B）即獲勝！</p>
+        </div>
+        
+        <div class="game-info">
+            <p>嘗試次數: <strong id="attempts">0</strong></p>
+        </div>
+        
+        <div class="input-section">
+            <input type="text" id="guessInput" placeholder="輸入 4 位數字" maxlength="4">
+            <button onclick="play()">猜測</button>
+        </div>
+        
+        <div class="records" id="recordsDiv"></div>
+    </div>
+
+    <script>
+        let answer = generateAnswer();
+        let attemptCount = 0;
+        
+        console.log("答案是（僅供測試）: " + answer);
+        
+        function generateAnswer() {
+            let digits = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+            let result = "";
+            
+            for (let i = 0; i < 4; i++) {
+                let randomIndex = Math.floor(Math.random() * digits.length);
+                result += digits[randomIndex];
+                digits.splice(randomIndex, 1);
+            }
+            
+            return result;
+        }
+        
+        function play() {
+            let input = document.getElementById("guessInput").value.trim();
+            
+            if (!isValid(input)) {
+                return;
+            }
+            
+            attemptCount++;
+            document.getElementById("attempts").textContent = attemptCount;
+            
+            let result = checkAB(input, answer);
+            
+            let recordsDiv = document.getElementById("recordsDiv");
+            let recordItem = document.createElement("div");
+            recordItem.className = "record-item";
+            recordItem.innerHTML = `
+                <span>第 ${attemptCount} 次: <span class="record-guess">${input}</span></span>
+                <span class="record-result">${result}</span>
+            `;
+            recordsDiv.insertBefore(recordItem, recordsDiv.firstChild);
+            
+            if (result === "4A0B") {
+                alert(`🎉 恭喜你猜對了！\n答案是: ${answer}\n總共嘗試了 ${attemptCount} 次`);
+            }
+            
+            document.getElementById("guessInput").value = "";
+            document.getElementById("guessInput").focus();
+        }
+        
+        function isValid(str) {
+            if (str.length !== 4) {
+                alert("❌ 錯誤：請輸入 4 位數字！");
+                return false;
+            }
+            
+            if (isNaN(str)) {
+                alert("❌ 錯誤：請只輸入數字！");
+                return false;
+            }
+            
+            let digits = str.split("");
+            let uniqueDigits = new Set(digits);
+            if (uniqueDigits.size !== 4) {
+                alert("❌ 錯誤：數字不能重複！");
+                return false;
+            }
+            
+            return true;
+        }
+        
+        function checkAB(guess, ans) {
+            let countA = 0;
+            let countB = 0;
+            
+            let guessArray = guess.split("");
+            let ansArray = ans.split("");
+            
+            for (let i = 0; i < 4; i++) {
+                if (guessArray[i] === ansArray[i]) {
+                    countA++;
+                }
+            }
+            
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 4; j++) {
+                    if (i !== j && guessArray[i] === ansArray[j]) {
+                        countB++;
+                    }
+                }
+            }
+            
+            return countA + "A" + countB + "B";
+        }
+        
+        document.getElementById("guessInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                play();
+            }
+        });
+    </script>
+</body>
+</html>
