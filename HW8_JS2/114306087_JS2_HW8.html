@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .calculator {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input, select {
+            padding: 5px;
+            width: 200px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            text-align: center;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Calculator</h1>
+    
+    <div class="calculator">
+        <div class="input-group">
+            <label>Number 1:</label>
+            <input type="number" id="number1">
+        </div>
+        
+        <div class="input-group">
+            <label>Operator:</label>
+            <select id="operator">
+                <option value="+">+</option>
+                <option value="-">-</option>
+                <option value="*">*</option>
+                <option value="/">/</option>
+            </select>
+        </div>
+        
+        <div class="input-group">
+            <label>Number 2:</label>
+            <input type="number" id="number2">
+        </div>
+        
+        <button onclick="calculate()">Calculate</button>
+        
+        <div class="result" id="result">Result: </div>
+    </div>
+
+    <script>
+        function add(a, b) {
+            return a + b;
+        }
+
+        function subtract(a, b) {
+            return a - b;
+        }
+
+        function multiply(a, b) {
+            return a * b;
+        }
+
+        function divide(a, b) {
+            if (b === 0) {
+                return null;
+            }
+            return a / b;
+        }
+
+        function calculate() {
+            const num1 = parseFloat(document.getElementById('number1').value);
+            const num2 = parseFloat(document.getElementById('number2').value);
+            const operator = document.getElementById('operator').value;
+
+            if (isNaN(num1) || isNaN(num2)) {
+                document.getElementById('result').textContent = 'Error: Please enter valid numbers';
+                return;
+            }
+
+            let result;
+
+            if (operator === '+') {
+                result = add(num1, num2);
+            } else if (operator === '-') {
+                result = subtract(num1, num2);
+            } else if (operator === '*') {
+                result = multiply(num1, num2);
+            } else if (operator === '/') {
+                result = divide(num1, num2);
+                if (result === null) {
+                    document.getElementById('result').textContent = 'Error: Division by zero';
+                    return;
+                }
+            }
+
+            document.getElementById('result').textContent = 'Result: ' + result.toFixed(2);
+        }
+    </script>
+</body>
+</html>
